@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Голосование</title>
+
+</head>
+<body>
+    <style>
+        form{
+            background-color: cadetblue;
+            border-radius: 5%;
+            line-height: 30px;
+            width: 40%;
+            text-indent: 15%;
+            }
+        div{
+            display: inline-block;
+            width: 40%;
+            background-color: darkseagreen;
+            text-indent: 15%;
+            border-radius: 5%;
+            margin-top: 5%;
+        }
+        #clickMe{
+            margin-left: 10%;
+        }
+    </style>
+<form name="postForm" id="formItems">
+  <h3>Какое блюдо предпочитаете?</h3>
+</form>
+<div name="stat_form" id="stat_form">
+    <h3>Текущая статистика:</h3>
+</div>
+</body>
+<script>
+
+try
+{
+    fetch('/variants',{
+        method: 'GET'
+    })
+    .then(function(response){ return response.json();})
+    .then(function(json) {
+        let itemsForm = JSON.parse(json);
+        let myForm = document.getElementById('formItems');
+
+        for(var i = 0; i< itemsForm.length; i++)
+         {
+        let newInput = document.createElement('input');            
+        let newBr = document.createElement('br'); 
+              newInput.type = 'radio';
+              newInput.value = 'var'+itemsForm[i]['code'];
+              newInput.id = 'var'+itemsForm[i]['code'];
+              newInput.name = 'dish';
+        let newLabel = document.createElement('label');  
+              newLabel.for = 'var'+itemsForm[i]['code'];
+              newLabel.innerText = itemsForm[i]['text'];
+              myForm.appendChild(newInput);
+              myForm.appendChild(newLabel);  
+              myForm.appendChild(newBr);
+         }  
+
+        let newBut = document.createElement('input');    
+            newBut.type = 'submit';
+            newBut.value = 'Отправить ответ';
+            newBut.id = 'clickMe';        
+        myForm.appendChild(newBut);   
+        document.getElementById('clickMe').addEventListener('click', addnewfetch,false);  
+    }) 
+    
+    }
+    catch{
+        console.log('error');
+    }
+
+function addnewfetch()
+{
+  fetch('/voit',{
+        method: 'POST'
+    })  
+}
+try
+{
+    fetch('/stat',{
+        method: 'POST'
+    })
+    .then(function(response){ return response.json();})
+    .then(function(json) {
+        let itemsDiv = json;
+        let myDiv = document.getElementById('stat_form');
+        let newUl = document.createElement('ul'); 
+        myDiv.appendChild(newUl);
+        for(var i in itemsDiv)
+        {
+        let newBrUl = document.createElement('br'); 
+        let newLi = document.createElement('li'); 
+             newLi.innerHTML = i + '- ' + itemsDiv[i];
+             myDiv.appendChild(newUl);
+             newUl.appendChild(newLi);  
+        }  
+    }) 
+    }
+    catch{
+        console.log('error');
+    }
+</script>
+</html>
