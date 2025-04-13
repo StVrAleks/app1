@@ -4,7 +4,11 @@ const fs = require("fs");
 const express = require("express"); // получаем модуль express
 // создаем приложение express
 const app = express();
-const urlencodedParser = express.urlencoded({extended: false});
+
+const urlencodedParser = express.urlencoded({extended: true});
+
+const jsonParser = express.json();
+app.use(express.urlencoded({ extended: true }));
 
     app.get("/page", function (_, response) {
         response.sendFile(__dirname + "/index.html");
@@ -13,30 +17,40 @@ const urlencodedParser = express.urlencoded({extended: false});
     app.post("/stat", urlencodedParser, function (request, response) {
         if(!request.body) return response.sendStatus(400);
         //чтение
-        const data = fs.readFileSync("voice.json");
+  /*      const data = fs.readFileSync("voice.json");
         if(!data) {  // если возникла ошибка
             return console.log('pysto', data);
         }
 
-        let textList = JSON.parse(data); 
+        let textList = JSON.parse(data); */
                        
         //запись в файл
-        const writeableStream = fs.createWriteStream("voice.json");
+      /*  const writeableStream = fs.createWriteStream("voice.json");
               writeableStream.write(JSON.stringify(textList));
-              writeableStream.end("\n");
-
-        response.send(JSON.stringify(textList));
+              writeableStream.end("\n");*/
+              fs.readFile("voice.json", function(error,data){
+                if(error) {  // если возникла ошибка
+                    return console.log(error);
+                }
+                response.send(data);
+            }) 
+      //  response.send(JSON.stringify(data));
     });
 
-    app.post("/voit", urlencodedParser, function (request, response) {
+    app.post("/voit", jsonParser, function (request, response) {
         if(!request.body) return response.sendStatus(400);
-       // console.log(request.body);
-       console.log("request.body", request.body);
-        console.log("request.body.dish", request.body.dish);
-        let dishes = request.body.dish;
-        let variants = {}; 
-        variants[dishes] = 1;
+       console.log("request.body", request.body.dish);
 
+        let dishes = request.body.dish;   
+        let variants = {}; 
+        if (dishes != 0)
+            variants[dishes] = 1;
+        else 
+            {
+            response.send('pysto');    
+            return console.log('no vibor');  
+            }
+            
         //чтение
         const data = fs.readFileSync("voice.json");
         if(!data) {  // если возникла ошибка
@@ -45,7 +59,6 @@ const urlencodedParser = express.urlencoded({extended: false});
 
         let textList = JSON.parse(data); 
             textList[dishes] = textList[dishes] + 1;
-            console.log(textList);
                        
         //запись в файл
         const writeableStream = fs.createWriteStream("voice.json");

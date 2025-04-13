@@ -7,16 +7,16 @@
 </head>
 <body>
     <style>
-        form{
+        #formItems{
             background-color: cadetblue;
             border-radius: 5%;
             line-height: 30px;
-            width: 40%;
+            width: 45%;
             text-indent: 15%;
             }
-        div{
+        #stat_form{
             display: inline-block;
-            width: 40%;
+            width: 45%;
             background-color: darkseagreen;
             text-indent: 15%;
             border-radius: 5%;
@@ -26,15 +26,15 @@
             margin-left: 10%;
         }
     </style>
-<form name="postForm" id="formItems">
+<div name="postForm" id="formItems">
   <h3>Какое блюдо предпочитаете?</h3>
-</form>
+</div>
 <div name="stat_form" id="stat_form">
     <h3>Текущая статистика:</h3>
 </div>
 </body>
 <script>
-
+let itemsDiv;
 try
 {
     fetch('/variants',{
@@ -62,47 +62,110 @@ try
          }  
 
         let newBut = document.createElement('input');    
-            newBut.type = 'submit';
+          //   newBut.type = 'submit';
+            newBut.type = 'button';
             newBut.value = 'Отправить ответ';
             newBut.id = 'clickMe';        
         myForm.appendChild(newBut);   
-        document.getElementById('clickMe').addEventListener('click', addnewfetch,false);  
+        document.getElementById('clickMe').addEventListener('click', addnewfetch, true);  
+//stat
+        let myDiv = document.getElementById('stat_form');
+            let newUl = document.createElement('ul');
+            newUl.id = 'UlIems'; 
+            
+            for(var i = 1; i<= itemsForm.length; i++)
+            {
+            let newBrUl = document.createElement('br'); 
+            let newLi = document.createElement('li'); 
+            newLi.name = 'li'+i;
+                newLi.innerHTML = 'var'+i + '- ' + itemsDiv["var" + i];
+                newLi.id = 'li' + i;
+                newUl.appendChild(newLi);  
+            }  
+            myDiv.appendChild(newUl);
     }) 
-    
     }
     catch{
         console.log('error');
     }
 
-function addnewfetch()
-{
-  fetch('/voit',{
-        method: 'POST'
-    })  
-}
 try
 {
-    fetch('/stat',{
+    fetch('/stat', {
         method: 'POST'
     })
     .then(function(response){ return response.json();})
     .then(function(json) {
-        let itemsDiv = json;
-        let myDiv = document.getElementById('stat_form');
-        let newUl = document.createElement('ul'); 
-        myDiv.appendChild(newUl);
-        for(var i in itemsDiv)
-        {
-        let newBrUl = document.createElement('br'); 
-        let newLi = document.createElement('li'); 
-             newLi.innerHTML = i + '- ' + itemsDiv[i];
-             myDiv.appendChild(newUl);
-             newUl.appendChild(newLi);  
-        }  
+        itemsDiv = json;
+           return itemsDiv;
     }) 
+}
+catch{
+        console.log('error stat');
     }
-    catch{
-        console.log('error');
-    }
+
+
+    
+function addnewfetch()
+{
+    let newVar = document.getElementsByName('dish');
+    for(var i=0; i<newVar.length; i++)
+    {
+        if(document.getElementsByName('dish')[i].checked)
+        {
+            var itemVar = document.getElementsByName('dish')[i].value;
+            document.getElementsByName('dish')[i].checked = false;
+            console.log(itemVar);    
+        }    
+    }    
+    if(!itemVar)
+        var itemVar = 0;
+    fetch('/voit',{
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({"dish": itemVar})
+    })
+    .then(function(){ var ans = getStat();})
+    .then(function(){ var ans = getStatIndex();});
+    
+}
+
+
+
+ async function getStat(){
+ 
+  /*  var apiCallPromise  = await fetch('/stat', {method: 'POST'});
+    var itemsDiv = await apiCallPromise.json();
+    console.log(itemsDiv);
+    return itemsDiv;*/
+await fetch('/stat', {
+        method: 'POST'
+    })
+ 
+    .then(function(response){ return response.json();})
+    .then(function(json) {
+        itemsDiv = json;
+        console.log(itemsDiv);
+        return itemsDiv;    
+ })
+
+}
+ function getStatIndex(){
+  
+var myli = document.getElementsByTagName("li");    
+var j=0;    
+    for(var i in itemsDiv)
+{
+    myli[j].innerHTML =  i + '- ' + JSON.stringify(itemsDiv[i]);
+    j++;
+}  
+
+return true; 
+ }
+
+
+
+
+
 </script>
 </html>
