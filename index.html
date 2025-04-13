@@ -125,8 +125,8 @@ function addnewfetch()
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"dish": itemVar})
     })
-    .then(function(){ var ans = getStat();})
-    .then(function(){ var ans = getStatIndex();});
+    .then(function(){ var itemsDiv = getStat();})
+    .then(function(){ var ans = getStatIndex(ans);});
     
 }
 
