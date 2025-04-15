@@ -66,5 +66,4 @@ app.use(express.urlencoded({ extended: true }));
             response.end(JSON.stringify(data));
         })   
     });
-
 app.listen(7980, ()=>console.log("Сервер запущен по адресу http://localhost:7980"));
