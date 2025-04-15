@@ -62,23 +62,22 @@ try
          }  
 
         let newBut = document.createElement('input');    
-          //   newBut.type = 'submit';
             newBut.type = 'button';
             newBut.value = 'Отправить ответ';
             newBut.id = 'clickMe';        
         myForm.appendChild(newBut);   
-        document.getElementById('clickMe').addEventListener('click', addnewfetch, true);  
+        document.getElementById('clickMe').addEventListener('click', addnewfetch, false);  
 //stat
         let myDiv = document.getElementById('stat_form');
             let newUl = document.createElement('ul');
             newUl.id = 'UlIems'; 
-            
+            let listNames = {'var1':'Борщ', 'var2':'Пельмени', 'var3':'Конфетки, бараночки', 'var4':'Мандарики, апельсинки', 'var5':'Криветки, устрицы'};
             for(var i = 1; i<= itemsForm.length; i++)
             {
             let newBrUl = document.createElement('br'); 
             let newLi = document.createElement('li'); 
             newLi.name = 'li'+i;
-                newLi.innerHTML = 'var'+i + '- ' + itemsDiv["var" + i];
+                newLi.innerHTML = listNames["var" + i] + '- ' + itemsDiv["var" + i];
                 newLi.id = 'li' + i;
                 newUl.appendChild(newLi);  
             }  
@@ -125,46 +124,31 @@ function addnewfetch()
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"dish": itemVar})
     })
-    .then(function(){ var ans = getStat();})
-    .then(function(){ var ans = getStatIndex();});
+    .then(function(){ var ans = getStat();});
     
 }
 
-
-
  async function getStat(){
  
-  /*  var apiCallPromise  = await fetch('/stat', {method: 'POST'});
-    var itemsDiv = await apiCallPromise.json();
-    console.log(itemsDiv);
-    return itemsDiv;*/
-await fetch('/stat', {
+ let response = await fetch('/stat', {
         method: 'POST'
-    })
+    });
+  setTimeout(function(){   
+ let data = response.json();
+ console.log("data", data);
  
-    .then(function(response){ return response.json();})
-    .then(function(json) {
-        itemsDiv = json;
-        console.log(itemsDiv);
-        return itemsDiv;    
- })
-
+        itemsDiv = data;
+        console.log("stat",itemsDiv);
+        let listNames = {'var1':'Борщ', 'var2':'Пельмени', 'var3':'Конфетки, бараночки', 'var4':'Мандарики, апельсинки', 'var5':'Криветки, устрицы'};
+        var myli = document.getElementsByTagName("li");  
+        var j=0;    
+            for(var i in itemsDiv)
+            {
+            myli[j].innerHTML =  listNames[i] + '- ' + JSON.stringify(itemsDiv[i]);
+            j++;
+            }  
+        return itemsDiv; },250);   
 }
- function getStatIndex(){
-  
-var myli = document.getElementsByTagName("li");    
-var j=0;    
-    for(var i in itemsDiv)
-{
-    myli[j].innerHTML =  i + '- ' + JSON.stringify(itemsDiv[i]);
-    j++;
-}  
-
-return true; 
- }
-
-
-
 
 
 </script>

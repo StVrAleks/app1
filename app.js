@@ -17,18 +17,7 @@ app.use(express.urlencoded({ extended: true }));
     app.post("/stat", urlencodedParser, function (request, response) {
         if(!request.body) return response.sendStatus(400);
         //чтение
-  /*      const data = fs.readFileSync("voice.json");
-        if(!data) {  // если возникла ошибка
-            return console.log('pysto', data);
-        }
-
-        let textList = JSON.parse(data); */
-                       
-        //запись в файл
-      /*  const writeableStream = fs.createWriteStream("voice.json");
-              writeableStream.write(JSON.stringify(textList));
-              writeableStream.end("\n");*/
-              fs.readFile("voice.json", function(error,data){
+              const data =  fs.readFile("voice.json", function(error,data){
                 if(error) {  // если возникла ошибка
                     return console.log(error);
                 }
