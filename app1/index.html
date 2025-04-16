@@ -33,8 +33,11 @@
     <h3>Текущая статистика:</h3>
 </div>
 </body>
+
+
 <script>
 let itemsDiv;
+let listNames = {'var1':'Борщ', 'var2':'Пельмени', 'var3':'Конфетки, бараночки', 'var4':'Мандарики, апельсинки', 'var5':'Криветки, устрицы'};
 try
 {
     fetch('/variants',{
@@ -71,7 +74,6 @@ try
         let myDiv = document.getElementById('stat_form');
             let newUl = document.createElement('ul');
             newUl.id = 'UlIems'; 
-            let listNames = {'var1':'Борщ', 'var2':'Пельмени', 'var3':'Конфетки, бараночки', 'var4':'Мандарики, апельсинки', 'var5':'Криветки, устрицы'};
             for(var i = 1; i<= itemsForm.length; i++)
             {
             let newBrUl = document.createElement('br'); 
@@ -85,7 +87,7 @@ try
     }) 
     }
     catch{
-        console.log('error');
+        console.log('error variants');
     }
 
 try
@@ -124,33 +126,31 @@ function addnewfetch()
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"dish": itemVar})
     })
-    .then(function(){ var ans = getStat();});
+    .then(function(){getStat();});
     
 }
 
- async function getStat(){
+async function getStat(){
  
- let response = await fetch('/stat', {
-        method: 'POST'
-    });
-  setTimeout(function(){   
- let data = response.json();
- console.log("data", data);
- 
-        itemsDiv = data;
-        console.log("stat",itemsDiv);
-        let listNames = {'var1':'Борщ', 'var2':'Пельмени', 'var3':'Конфетки, бараночки', 'var4':'Мандарики, апельсинки', 'var5':'Криветки, устрицы'};
-        var myli = document.getElementsByTagName("li");  
-        var j=0;    
-            for(var i in itemsDiv)
-            {
-            myli[j].innerHTML =  listNames[i] + '- ' + JSON.stringify(itemsDiv[i]);
-            j++;
-            }  
-        return itemsDiv; },250);   
+ let response = await fetch('/stat', {method: 'POST'});
+ let data = await response.json();
 
+ // setTimeout для дом. компа. Запросы не успевают обрабатываться при быстром нажатии на кнопку.
+//  setTimeout(function(){   
+
+ //console.log("data", data);
+ 
+ itemsDiv = data;
+ console.log("stat",itemsDiv);
+ var myli = document.getElementsByTagName("li");
+ var j=0;
+     for(var i in itemsDiv)
+        {
+        myli[j].innerHTML =  listNames[i] + '- ' + JSON.stringify(itemsDiv[i]);
+        j++;
+        }  
+  //      return itemsDiv; },250);   
+  return itemsDiv;
 }
-
-
 </script>
 </html>

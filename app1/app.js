@@ -10,23 +10,19 @@ const urlencodedParser = express.urlencoded({extended: true});
 const jsonParser = express.json();
 app.use(express.urlencoded({ extended: true }));
 
-    app.get("/page", function (_, response) {
+app.get("/page", function (_, response) {
         response.sendFile(__dirname + "/index.html");
     });
 
-    app.post("/stat", urlencodedParser, function (request, response) {
-        if(!request.body) return response.sendStatus(400);
-        //чтение
-              const data =  fs.readFile("voice.json", function(error,data){
-                if(error) {  // если возникла ошибка
-                    return console.log(error);
-                }
-                response.send(data);
-            }) 
-      //  response.send(JSON.stringify(data));
+app.post("/stat", urlencodedParser, function (request, response) {
+      const data = fs.readFileSync("voice.json");
+      if(!data) {  // если возникла ошибка
+          return console.log('stat pysto', data);
+      }
+      response.end(data);
     });
 
-    app.post("/voit", jsonParser, function (request, response) {
+app.post("/voit", jsonParser, function (request, response) {
         if(!request.body) return response.sendStatus(400);
        console.log("request.body", request.body.dish);
 
@@ -57,7 +53,7 @@ app.use(express.urlencoded({ extended: true }));
         response.send(textList);
     });
 
-    app.get("/variants", function (request, response) {
+app.get("/variants", function (request, response) {
       //  let itemVariants = [{"code":1, "text":"Борщ"},{"code":2, "text":"Пельмени"},{"code":3, "text":"Конфетки, бараночки"},{"code":4, "text":"Мандарики, апельсинки"},{"code":5, "text":"Криветки, устрицы"}];
         fs.readFile("variants.json", 'utf8', function(error,data){
             if(error) {  // если возникла ошибка
