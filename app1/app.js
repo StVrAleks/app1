@@ -45,7 +45,7 @@ app.post("/voit", jsonParser, function (request, response) {
       // console.log("request.body.dish", request.body.dish);
        console.log("request.body", request.body);
         let dishes = request.body.dish;   
-        let variants = {}; 
+        let variants = {};
         if (dishes != 0)
             variants[dishes] = 1;
         else 
@@ -71,7 +71,6 @@ app.post("/voit", jsonParser, function (request, response) {
            try{
            fs.writeFileSync("voice.json", JSON.stringify(textList));
               console.log("write to file", textList);
-              textList = JSON.parse(data); 
            }
            catch (err) {
             console.log(err);

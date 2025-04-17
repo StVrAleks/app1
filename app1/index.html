@@ -107,7 +107,7 @@ catch{
 
 
     
-function addnewfetch()
+async function addnewfetch()
 {
     let newVar = document.getElementsByName('dish');
     for(var i=0; i<newVar.length; i++)
@@ -121,32 +121,37 @@ function addnewfetch()
     }    
     if(!itemVar)
         var itemVar = 0;
-    fetch('/voit',{
+let res = await  fetch('/voit',{
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"dish": itemVar})
     })
-    .then(getStat());
-    
+    .then(console.log('Голос принят'))
+    .then(response = await fetch('/stat', {method: 'POST'}))
+    .then(response => response.json())
+    .then(data = await response.json())
+    .then(console.log('data', data))
+    .then(rez = await getStat(data));
 }
 
-async function getStat(){
- 
+async function getStat(data){
+ /*
  let response = await fetch('/stat', {method: 'POST'});
  response => response.json();
  let data = await response.json();
-
+*/
  itemsDiv = data;
  console.log("stat",itemsDiv);
  var myli = document.getElementsByTagName("li");
  var j=0;
      for(var i in itemsDiv)
         {
-        myli[j].innerHTML =  listNames[i] + '- ' + JSON.stringify(itemsDiv[i]);
+        myli[j].innerHTML =  listNames[i] + ' - ' + JSON.stringify(itemsDiv[i]);
         j++;
         }  
 
   return data;
 }
+
 </script>
 </html>
