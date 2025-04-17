@@ -64,10 +64,18 @@ app.post("/voit", jsonParser, function (request, response) {
             textList[dishes] = textList[dishes] + 1;
                        
         //запись в файл
-        const writeableStream = fs.createWriteStream("voice.json");
+     /*   const writeableStream = fs.createWriteStream("voice.json");
               writeableStream.write(JSON.stringify(textList));
               writeableStream.end("\n");
+            */  
+           try{
+           fs.writeFileSync("voice.json", JSON.stringify(textList));
               console.log("write to file", textList);
+              textList = JSON.parse(data); 
+           }
+           catch (err) {
+            console.log(err);
+           }
         response.send(textList);
     });
 
