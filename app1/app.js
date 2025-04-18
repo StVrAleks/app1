@@ -17,11 +17,12 @@ app.get("/page", function (_, response) {
 app.post("/stat", urlencodedParser, function (request, response) {
       const data = fs.readFileSync("voice.json");
       if(!data) {  // если возникла ошибка
-          return console.log('stat pysto', data);
+          return console.log('/stat pysto', data);
       }
-
-      console.log("read stat", JSON.parse(data));
-      response.send(data);
+      console.log("/stat read", JSON.parse(data));
+      //response.send(data);
+      let clientData = JSON.parse(data);
+            response.send(clientData);
     });
 
 /*app.post("/stat", urlencodedParser, function (request, response) {
@@ -42,26 +43,22 @@ app.post("/stat", urlencodedParser, function (request, response) {
  /* });*/
 app.post("/voit", jsonParser, function (request, response) {
         if(!request.body) return response.sendStatus(400);
-      // console.log("request.body.dish", request.body.dish);
        console.log("request.body", request.body);
         let dishes = request.body.dish;   
-        let variants = {};
-        if (dishes != 0)
-            variants[dishes] = 1;
-        else 
-            {
-            response.send('pysto');    
-            return console.log('no vibor');  
-            }
-            
+       // let variants = {};
+        if (dishes === 0)
+        {
+            console.log('/voit  no vibor');  
+            response.status(401).end();
+        }    
         //чтение
         const data = fs.readFileSync("voice.json");
         if(!data) {  // если возникла ошибка
             return console.log('pysto', data);
         }
 
-        let textList = JSON.parse(data); 
-            textList[dishes] = textList[dishes] + 1;
+        let clientData = JSON.parse(data); 
+            clientData[dishes] = clientData[dishes] + 1;
                        
         //запись в файл
      /*   const writeableStream = fs.createWriteStream("voice.json");
@@ -69,13 +66,13 @@ app.post("/voit", jsonParser, function (request, response) {
               writeableStream.end("\n");
             */  
            try{
-           fs.writeFileSync("voice.json", JSON.stringify(textList));
-              console.log("write to file", textList);
+           fs.writeFileSync("voice.json", JSON.stringify(clientData));
+              console.log("/voit write to file", clientData);
            }
            catch (err) {
             console.log(err);
            }
-        response.send(textList);
+        response.send(clientData);
     });
 
 app.get("/variants", function (request, response) {
@@ -85,7 +82,8 @@ app.get("/variants", function (request, response) {
                 return console.log(error);
             }
             console.log('view variants',JSON.stringify(data));
-            response.end(JSON.stringify(data));
+            let clientData = JSON.parse(data);
+            response.send(clientData);
         })   
     });
 app.listen(7980, ()=>console.log("Сервер запущен по адресу http://localhost:7980"));
